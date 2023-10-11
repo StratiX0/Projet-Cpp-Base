@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
+#include <fstream>
 
 
 
@@ -42,7 +43,7 @@ void create_allie() {
 
         Allie compagnon;
 
-        std::cout << "Creer votre pokemon n " << i+1 << "! :\n";
+        std::cout << "Creer votre pokemon n " << i+1 << " :" << std::endl;
         std::cout << "Donner un nom : ";
 
         compagnon.id = i;
@@ -56,16 +57,24 @@ void create_allie() {
 
         std::cout << "Donner un nombre de degats de l'attaque 2 : ";
         std::cin >> compagnon.attack2;
+
+        std::ifstream allieFile;
+        allieFile.open("Allie.txt", std::ios::in);
+
         
-        std::cout << compagnon.id << "\n" << compagnon.nom << "\n" << compagnon.vie << "\n" << compagnon.attack1 << "\n" << compagnon.attack2 << "\n";
+        std::cout << compagnon.id << std::endl << compagnon.nom << std::endl << compagnon.vie << std::endl << compagnon.attack1 << std::endl << compagnon.attack2 << std::endl;
 
     }
 
 }
 
+
+
+
+
 int main()
 {
-    std::cout << "Bonjour jeune aventurier !\n";
+    std::cout << "Bonjour jeune aventurier !" << std::endl;
 
     create_allie();
 
