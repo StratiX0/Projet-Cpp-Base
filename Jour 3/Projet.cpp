@@ -1,15 +1,16 @@
-// Jeu.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
+// test.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
 //
 
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
+#include <random>
 
 class Character {
 public:
     int id;
-    char nom[30];
+    std::string nom;
     int vie;
     int attack1;
     int attack2;
@@ -51,6 +52,77 @@ void create_allie(std::vector<Character>& allies) {
     allies.push_back(allie);
 }
 
+
+// Définir des noms d'ennemis prédéfinis
+std::vector<std::string> predefinedEnemyNames = { "Xenomorphe", "Predator", "Garry" };
+
+// Fonction pour créer des ennemis avec des noms prédéfinis et des valeurs similaires aux alliés
+void create_enemy(std::vector<Character>& enemies, const std::vector<Character>& allies) {
+    Character enemy;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> distribution(0.8, 1.2);  // Variation de 20% autour de 1.0
+
+    enemy.id = enemies.size() + 1;
+
+    // Sélectionner un nom d'ennemi aléatoire parmi les noms prédéfinis
+    int randomIndex = rand() % predefinedEnemyNames.size();
+    enemy.nom = predefinedEnemyNames[randomIndex];
+
+    // Génération de valeurs similaires aux alliés avec une variation de 20%
+    const Character& randomAlly = allies[rand() % allies.size()];
+    enemy.vie = static_cast<int>(randomAlly.vie * distribution(gen));
+    enemy.attack1 = static_cast<int>(randomAlly.attack1 * distribution(gen));
+    enemy.attack2 = static_cast<int>(randomAlly.attack2 * distribution(gen));
+
+    std::ofstream EnemyFile("Enemy.txt", std::ios::app);
+
+    if (!EnemyFile.is_open()) {
+        std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
+        return;
+    }
+
+    EnemyFile << "ID: " << enemy.id << std::endl << "Nom: " << enemy.nom << std::endl << "Vie: " << enemy.vie << std::endl << "Attack1: " << enemy.attack1 << std::endl << "Attack2: " << enemy.attack2 << std::endl;
+    EnemyFile.close();
+
+    enemies.push_back(enemy);
+}
+
+
+//// Fonction pour créer des alliés
+//void create_enemy(std::vector<Character>& enemies) {
+//    Character enemy;
+//
+//    std::cout << "Créer votre personnage n " << 1 << " :" << std::endl;
+//    enemy.id = 1;
+//
+//    std::cout << "Donner un nom : ";
+//    std::cin >> enemy.nom;
+//
+//    std::cout << "Donner un nombre de points de vie : ";
+//    std::cin >> enemy.vie;
+//
+//    std::cout << "Donner une valeur de dégâts de l'attaque 1 : ";
+//    std::cin >> enemy.attack1;
+//
+//    std::cout << "Donner une valeur de dégâts de l'attaque 2 : ";
+//    std::cin >> enemy.attack2;
+//
+//    std::ofstream EnemyFile("Enemy.txt", std::ios::app);
+//
+//    if (!EnemyFile.is_open()) {
+//        std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
+//        return;
+//    }
+//
+//    EnemyFile << "ID: " << enemy.id << std::endl << "Nom: " << enemy.nom << std::endl << "Vie: " << enemy.vie << std::endl << "Attack1: " << enemy.attack1 << std::endl << "Attack2: " << enemy.attack2 << std::endl;
+//    EnemyFile.close();
+//
+//    enemies.push_back(enemy);
+//}
+
+
+
 // Fonction pour charger les alliés à partir du fichier
 void load_allies(std::vector<Character>& allies) {
     std::ifstream AllieFile("Allie.txt");
@@ -60,22 +132,81 @@ void load_allies(std::vector<Character>& allies) {
     }
 
     Character allie;
-    while (AllieFile >> allie.id) {
-        AllieFile.ignore();
-        AllieFile.getline(allie.nom, 30);
-        AllieFile >> allie.vie >> allie.attack1 >> allie.attack2;
-        allies.push_back(allie);
+    std::string line;
+    while (std::getline(AllieFile, line)) {
+        if (line.find("ID: ") == 0) {
+            // Lire l'ID
+            allie.id = std::stoi(line.substr(4));
+        }
+        else if (line.find("Nom: ") == 0) {
+            // Lire le nom
+            allie.nom = line.substr(5);
+        }
+        else if (line.find("Vie: ") == 0) {
+            // Lire la vie
+            allie.vie = std::stoi(line.substr(5));
+        }
+        else if (line.find("Attack1: ") == 0) {
+            // Lire attack1
+            allie.attack1 = std::stoi(line.substr(8));
+        }
+        else if (line.find("Attack2: ") == 0) {
+            // Lire attack2
+            allie.attack2 = std::stoi(line.substr(8));
+            allies.push_back(allie);
+        }
     }
 
     AllieFile.close();
 }
+
+// Fonction pour charger les alliés à partir du fichier
+void load_enemies(std::vector<Character>& enemies) {
+    std::ifstream EnemyFile("Enemy.txt");
+    if (!EnemyFile.is_open()) {
+        std::cerr << "Le fichier n'existe pas. Créez d'abord des alliés." << std::endl;
+        return;
+    }
+
+    Character enemy;
+    std::string line;
+    while (std::getline(EnemyFile, line)) {
+        if (line.find("ID: ") == 0) {
+            // Lire l'ID
+            enemy.id = std::stoi(line.substr(4));
+        }
+        else if (line.find("Nom: ") == 0) {
+            // Lire le nom
+            enemy.nom = line.substr(5);
+        }
+        else if (line.find("Vie: ") == 0) {
+            // Lire la vie
+            enemy.vie = std::stoi(line.substr(5));
+        }
+        else if (line.find("Attack1: ") == 0) {
+            // Lire attack1
+            enemy.attack1 = std::stoi(line.substr(8));
+        }
+        else if (line.find("Attack2: ") == 0) {
+            // Lire attack2
+            enemy.attack2 = std::stoi(line.substr(8));
+            enemies.push_back(enemy);
+        }
+    }
+
+    EnemyFile.close();
+}
+
 
 int main() {
     std::cout << "Bonjour jeune aventurier !" << std::endl;
 
     std::vector<Character> allies;
     create_allie(allies);
+    std::vector<Character> enemies;
+    create_enemy(enemies, allies);
     load_allies(allies);
+    load_enemies(enemies);
 
     if (allies.empty()) {
         std::cout << "Aucun allié n'a été chargé. Créez des alliés d'abord." << std::endl;
@@ -83,12 +214,23 @@ int main() {
     else {
         std::cout << "Nombre d'alliés chargés : " << allies.size() << std::endl;
         for (const Character& allie : allies) {
-            std::cout << "Nom : " << allie.nom << ", Vie : " << allie.vie << std::endl;
+            std::cout << "Nom : " << allie.nom << ", Vie : " << allie.vie << ", Attaque 1 : " << allie.attack1 << ", Attaque 2 : " << allie.attack2 << std::endl;
+        }
+    }
+
+    if (enemies.empty()) {
+        std::cout << "Aucun ennemie n'a été chargé. Créez des ennemies d'abord." << std::endl;
+    }
+    else {
+        std::cout << "Nombre d'ennemies chargés : " << allies.size() << std::endl;
+        for (const Character& enemy : enemies) {
+            std::cout << "Nom : " << enemy.nom << ", Vie : " << enemy.vie << ", Attaque 1 : " << enemy.attack1 << ", Attaque 2 : " << enemy.attack2 << std::endl;
         }
     }
 
     return 0;
 }
+
 
 // Exécuter le programme : Ctrl+F5 ou menu Déboguer > Exécuter sans débogage
 // Déboguer le programme : F5 ou menu Déboguer > Démarrer le débogage
