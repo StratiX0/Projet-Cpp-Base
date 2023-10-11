@@ -39,14 +39,14 @@ public:
 
 void create_allie() {
 
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 3; i++) {
 
         Allie compagnon;
 
         std::cout << "Creer votre pokemon n " << i+1 << " :" << std::endl;
         std::cout << "Donner un nom : ";
 
-        compagnon.id = i;
+        compagnon.id = i+1;
         std::cin >> compagnon.nom;
 
         std::cout << "Donner un nombre de points de vie : ";
@@ -58,12 +58,23 @@ void create_allie() {
         std::cout << "Donner une valeur de degats de l'attaque 2 : ";
         std::cin >> compagnon.attack2;
 
-        //std::ofstream allieFile;
-        //allieFile.open("Allie.txt", std::ios::in);
 
-        std::ofstream AllieFile("Allie.txt", std::ios::in);
+        // Créer un objet ofstream pour écrire dans le fichier
+        std::ofstream AllieFile;
+
+        // Ouvrir le fichier en mode append (ajout)
+        AllieFile.open("Allie.txt", std::ios::app);
+
+        // Vérifier si l'ouverture du fichier a réussi
+        if (!AllieFile.is_open()) {
+            std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
+        }
+
+        // Écrire le texte dans le fichier
         AllieFile << "ID: " << compagnon.id << std::endl << "Nom: " << compagnon.nom << std::endl << "Vie: " << compagnon.vie << std::endl << "Attack1: " << compagnon.attack1 << std::endl << "Attack2: " << compagnon.attack2 << std::endl;
 
+        // Fermer le fichier
+        AllieFile.close();
         
         std::cout << compagnon.id << std::endl << compagnon.nom << std::endl << compagnon.vie << std::endl << compagnon.attack1 << std::endl << compagnon.attack2 << std::endl;
 
@@ -73,9 +84,53 @@ void create_allie() {
 
 // Fonction pour créer des ennemies
 
-void create_ennemi() {
-
-}
+//void create_ennemi() {
+//
+//    for (int i = 0; i < 3; i++) {
+//
+//        Ennemi adversaire;
+//
+//        std::cout << "Creer votre pokemon n " << i + 1 << " :" << std::endl;
+//        std::cout << "Donner un nom : ";
+//
+//        compagnon.id = i + 1;
+//        std::cin >> compagnon.nom;
+//
+//        std::cout << "Donner un nombre de points de vie : ";
+//        std::cin >> compagnon.vie;
+//
+//        std::cout << "Donner une valeur de degats de l'attaque 1 : ";
+//        std::cin >> compagnon.attack1;
+//
+//        std::cout << "Donner une valeur de degats de l'attaque 2 : ";
+//        std::cin >> compagnon.attack2;
+//
+//
+//        // Créer un objet ofstream pour écrire dans le fichier
+//        std::ofstream AllieFile;
+//
+//        // Ouvrir le fichier en mode append (ajout)
+//        AllieFile.open("Allie.txt", std::ios::app);
+//
+//        // Vérifier si l'ouverture du fichier a réussi
+//        if (!AllieFile.is_open()) {
+//            std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
+//        }
+//
+//        // Texte à ajouter au fichier
+//        std::string texteAAjouter = "Ceci est du texte ajouté au fichier.\n";
+//
+//        // Écrire le texte dans le fichier
+//        AllieFile << "ID: " << compagnon.id << std::endl << "Nom: " << compagnon.nom << std::endl << "Vie: " << compagnon.vie << std::endl << "Attack1: " << compagnon.attack1 << std::endl << "Attack2: " << compagnon.attack2 << std::endl;
+//
+//        // Fermer le fichier
+//        AllieFile.close();
+//
+//        std::cout << compagnon.id << std::endl << compagnon.nom << std::endl << compagnon.vie << std::endl << compagnon.attack1 << std::endl << compagnon.attack2 << std::endl;
+//
+//    }
+//
+//}
 
 
 

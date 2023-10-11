@@ -1,5 +1,0 @@
-ID: 0
-Nom: bob
-Vie: 1
-Attack1: 2
-Attack2: 3
