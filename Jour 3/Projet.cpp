@@ -1,4 +1,4 @@
-// Jour 3.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
+// Jeu.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
 //
 
 #include <iostream>
@@ -39,7 +39,7 @@ public:
 
 void create_allie() {
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 1; i++) {
 
         Allie compagnon;
 
@@ -52,14 +52,17 @@ void create_allie() {
         std::cout << "Donner un nombre de points de vie : ";
         std::cin >> compagnon.vie;
 
-        std::cout << "Donner un nombre de degats de l'attaque 1 : ";
+        std::cout << "Donner une valeur de degats de l'attaque 1 : ";
         std::cin >> compagnon.attack1;
 
-        std::cout << "Donner un nombre de degats de l'attaque 2 : ";
+        std::cout << "Donner une valeur de degats de l'attaque 2 : ";
         std::cin >> compagnon.attack2;
 
-        std::ifstream allieFile;
-        allieFile.open("Allie.txt", std::ios::in);
+        //std::ofstream allieFile;
+        //allieFile.open("Allie.txt", std::ios::in);
+
+        std::ofstream AllieFile("Allie.txt", std::ios::in);
+        AllieFile << "ID: " << compagnon.id << std::endl << "Nom: " << compagnon.nom << std::endl << "Vie: " << compagnon.vie << std::endl << "Attack1: " << compagnon.attack1 << std::endl << "Attack2: " << compagnon.attack2 << std::endl;
 
         
         std::cout << compagnon.id << std::endl << compagnon.nom << std::endl << compagnon.vie << std::endl << compagnon.attack1 << std::endl << compagnon.attack2 << std::endl;
@@ -68,7 +71,11 @@ void create_allie() {
 
 }
 
+// Fonction pour créer des ennemies
 
+void create_ennemi() {
+
+}
 
 
 
