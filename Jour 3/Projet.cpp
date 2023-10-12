@@ -7,226 +7,219 @@
 #include <string>
 #include <random>
 
-class Character {
+
+
+class Vaisseau {
+public:
+    int id;
+    std::string nom;
+    int vie;
+    int missiles;
+    int plasma;
+    int mc;
+    int shieldPower;
+    int fsdCldw;
+    int reparation;
+
+};
+
+class Ennemie {
 public:
     int id;
     std::string nom;
     int vie;
     int attack1;
     int attack2;
+    int armure;
+    int fuite;
+    int regen;
 
-    void setVie(int degat_subi) {
-        vie -= degat_subi;
-    }
 };
 
-// Fonction pour créer des alliés
-void create_allie(std::vector<Character>& allies) {
-    Character allie;
 
-    std::cout << "Créer votre personnage n " << 1 << " :" << std::endl;
-    allie.id = 1;
 
-    std::cout << "Donner un nom : ";
-    std::cin >> allie.nom;
+// Fonction permettant de créer le vaisseau du joueur en fonction de la difficulté
+int createVaisseau(int difficulte) {
+    // Initialisation du générateur de nombres aléatoires
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-    std::cout << "Donner un nombre de points de vie : ";
-    std::cin >> allie.vie;
+    // Définir des noms de vaisseau prédéfinis
+    std::vector<std::string> vaisseauNom = { "Chieftain", "Kraken", "Kom'Rk" };
+    int index = std::rand() % vaisseauNom.size();
+    std::string value = vaisseauNom[index]; // un nom de vaisseau aléatoire pris de la liste
 
-    std::cout << "Donner une valeur de dégâts de l'attaque 1 : ";
-    std::cin >> allie.attack1;
+    int hp = 250;
 
-    std::cout << "Donner une valeur de dégâts de l'attaque 2 : ";
-    std::cin >> allie.attack2;
+    Vaisseau vaisseau;
 
-    std::ofstream AllieFile("Allie.txt", std::ios::app);
+    switch (difficulte) {
+    case 1:
+        vaisseau.id = 0;
+        vaisseau.nom = value;
+        vaisseau.vie = hp;
+        vaisseau.missiles = 15;
+        vaisseau.plasma = 45;
+        vaisseau.mc = 300;
+        vaisseau.shieldPower = 30;
+        vaisseau.fsdCldw = 2;
+        vaisseau.reparation = 15;
+        break;
 
-    if (!AllieFile.is_open()) {
-        std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
-        return;
+    case 2:
+        vaisseau.id = 0;
+        vaisseau.nom = value;
+        vaisseau.vie = hp;
+        vaisseau.missiles = 10;
+        vaisseau.plasma = 30;
+        vaisseau.mc = 200;
+        vaisseau.shieldPower = 20;
+        vaisseau.fsdCldw = 3;
+        vaisseau.reparation = 10;
+        break;
+
+    case 3:
+        vaisseau.id = 0;
+        vaisseau.nom = value;
+        vaisseau.vie = hp;
+        vaisseau.missiles = 5;
+        vaisseau.plasma = 20;
+        vaisseau.mc = 150;
+        vaisseau.shieldPower = 10;
+        vaisseau.fsdCldw = 4;
+        vaisseau.reparation = 5;
+        break;
+
+    default:
+        // Gérer la valeur de difficulté par défaut ici
+        break;
     }
 
-    AllieFile << "ID: " << allie.id << std::endl << "Nom: " << allie.nom << std::endl << "Vie: " << allie.vie << std::endl << "Attack1: " << allie.attack1 << std::endl << "Attack2: " << allie.attack2 << std::endl;
-    AllieFile.close();
+    std::ofstream VaisseauFile("Vaisseau.txt", std::ios::trunc);
 
-    allies.push_back(allie);
+    if (!VaisseauFile.is_open()) {
+        std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
+        return -1; // Retourner une valeur d'erreur
+    }
+    else {
+        VaisseauFile << "ID: " << vaisseau.id << std::endl << "Nom: " << vaisseau.nom << std::endl << "Vie: " << vaisseau.vie << std::endl << "Missiles: " << vaisseau.missiles << std::endl << "Plasma: " << vaisseau.plasma << std::endl << "MC: " << vaisseau.mc << std::endl << "Shield-Power: " << vaisseau.shieldPower << std::endl << "FSDcldw: " << vaisseau.fsdCldw << std::endl << "Reparation: " << vaisseau.reparation << std::endl;
+        VaisseauFile.close();
+    }
+
+    std::cout << "ID: " << vaisseau.id << std::endl << "Nom: " << vaisseau.nom << std::endl << "Vie: " << vaisseau.vie << std::endl << "Missiles: " << vaisseau.missiles << std::endl << "Plasma: " << vaisseau.plasma << std::endl << "MC: " << vaisseau.mc << std::endl << "Shield-Power: " << vaisseau.shieldPower << std::endl << "FSDcldw: " << vaisseau.fsdCldw << std::endl << "Reparation: " << vaisseau.reparation << std::endl;
+
+    return 0; // Renvoyer 0 pour indiquer le succès
 }
 
 
-// Définir des noms d'ennemis prédéfinis
-std::vector<std::string> predefinedEnemyNames = { "Xenomorphe", "Predator", "Garry" };
 
-// Fonction pour créer des ennemis avec des noms prédéfinis et des valeurs similaires aux alliés
-void create_enemy(std::vector<Character>& enemies, const std::vector<Character>& allies) {
-    Character enemy;
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> distribution(0.8, 1.2);  // Variation de 20% autour de 1.0
-
-    enemy.id = enemies.size() + 1;
-
-    // Sélectionner un nom d'ennemi aléatoire parmi les noms prédéfinis
-    int randomIndex = rand() % predefinedEnemyNames.size();
-    enemy.nom = predefinedEnemyNames[randomIndex];
-
-    // Génération de valeurs similaires aux alliés avec une variation de 20%
-    const Character& randomAlly = allies[rand() % allies.size()];
-    enemy.vie = static_cast<int>(randomAlly.vie * distribution(gen));
-    enemy.attack1 = static_cast<int>(randomAlly.attack1 * distribution(gen));
-    enemy.attack2 = static_cast<int>(randomAlly.attack2 * distribution(gen));
-
-    std::ofstream EnemyFile("Enemy.txt", std::ios::app);
-
-    if (!EnemyFile.is_open()) {
-        std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
-        return;
-    }
-
-    EnemyFile << "ID: " << enemy.id << std::endl << "Nom: " << enemy.nom << std::endl << "Vie: " << enemy.vie << std::endl << "Attack1: " << enemy.attack1 << std::endl << "Attack2: " << enemy.attack2 << std::endl;
-    EnemyFile.close();
-
-    enemies.push_back(enemy);
-}
-
-
-//// Fonction pour créer des alliés
-//void create_enemy(std::vector<Character>& enemies) {
-//    Character enemy;
+// Fonction permettant de créer le vaisseau du joueur en fonction de la difficulté
+//int createEnnemie(int difficulte) {
+//    // Initialisation du générateur de nombres aléatoires
+//    std::srand(static_cast<unsigned int>(std::time(nullptr)));
 //
-//    std::cout << "Créer votre personnage n " << 1 << " :" << std::endl;
-//    enemy.id = 1;
+//    // Définir des noms d'ennemis prédéfinis
+//    std::vector<std::string> ennemieNom = { "Xenomorphe", "Predator", "Garry" };
+//    int index = std::rand() % ennemieNom.size();
+//    std::string value = ennemieNom[index]; // un nom de vaisseau aléatoire pris de la liste
 //
-//    std::cout << "Donner un nom : ";
-//    std::cin >> enemy.nom;
+//    int hp = 250;
 //
-//    std::cout << "Donner un nombre de points de vie : ";
-//    std::cin >> enemy.vie;
+//    Ennemie ennemie;
 //
-//    std::cout << "Donner une valeur de dégâts de l'attaque 1 : ";
-//    std::cin >> enemy.attack1;
 //
-//    std::cout << "Donner une valeur de dégâts de l'attaque 2 : ";
-//    std::cin >> enemy.attack2;
+//    /* Memo class ennemie
+//    int id;
+//    std::string nom;
+//    int vie;
+//    int attack1;
+//    int attack2;
+//    int armure;
+//    int fuite;
+//    int regen;*/
 //
-//    std::ofstream EnemyFile("Enemy.txt", std::ios::app);
 //
-//    if (!EnemyFile.is_open()) {
-//        std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
-//        return;
+//    switch (difficulte) {
+//    case 1:
+//
+//        switch (value) {
+//
+//            case "Xenomorphe":
+//                ennemie.id = 0;
+//                ennemie.nom = value;
+//                ennemie.vie = 400;
+//                ennemie.missiles = 15;
+//                ennemie.plasma = 45;
+//                ennemie.mc = 300;
+//                ennemie.shieldPower = 30;
+//                ennemie.fsdCldw = 2;
+//                ennemie.reparation = 15;
+//                break;
+//
+//        }
+//
+//
+//        
+//
+//    case 2:
+//        vaisseau.id = 0;
+//        vaisseau.nom = value;
+//        vaisseau.vie = hp;
+//        vaisseau.missiles = 10;
+//        vaisseau.plasma = 30;
+//        vaisseau.mc = 200;
+//        vaisseau.shieldPower = 20;
+//        vaisseau.fsdCldw = 3;
+//        vaisseau.reparation = 10;
+//        break;
+//
+//    case 3:
+//        vaisseau.id = 0;
+//        vaisseau.nom = value;
+//        vaisseau.vie = hp;
+//        vaisseau.missiles = 5;
+//        vaisseau.plasma = 20;
+//        vaisseau.mc = 150;
+//        vaisseau.shieldPower = 10;
+//        vaisseau.fsdCldw = 4;
+//        vaisseau.reparation = 5;
+//        break;
+//
+//    default:
+//        // Gérer la valeur de difficulté par défaut ici
+//        break;
 //    }
 //
-//    EnemyFile << "ID: " << enemy.id << std::endl << "Nom: " << enemy.nom << std::endl << "Vie: " << enemy.vie << std::endl << "Attack1: " << enemy.attack1 << std::endl << "Attack2: " << enemy.attack2 << std::endl;
-//    EnemyFile.close();
+//    std::ofstream VaisseauFile("Vaisseau.txt", std::ios::trunc);
 //
-//    enemies.push_back(enemy);
+//    if (!VaisseauFile.is_open()) {
+//        std::cerr << "Erreur : Impossible d'ouvrir le fichier." << std::endl;
+//        return -1; // Retourner une valeur d'erreur
+//    }
+//    else {
+//        VaisseauFile << "ID: " << vaisseau.id << std::endl << "Nom: " << vaisseau.nom << std::endl << "Vie: " << vaisseau.vie << std::endl << "Missiles: " << vaisseau.missiles << std::endl << "Plasma: " << vaisseau.plasma << std::endl << "MC: " << vaisseau.mc << std::endl << "Shield-Power: " << vaisseau.shieldPower << std::endl << "FSDcldw: " << vaisseau.fsdCldw << std::endl << "Reparation: " << vaisseau.reparation << std::endl;
+//        VaisseauFile.close();
+//    }
+//
+//    std::cout << "ID: " << vaisseau.id << std::endl << "Nom: " << vaisseau.nom << std::endl << "Vie: " << vaisseau.vie << std::endl << "Missiles: " << vaisseau.missiles << std::endl << "Plasma: " << vaisseau.plasma << std::endl << "MC: " << vaisseau.mc << std::endl << "Shield-Power: " << vaisseau.shieldPower << std::endl << "FSDcldw: " << vaisseau.fsdCldw << std::endl << "Reparation: " << vaisseau.reparation << std::endl;
+//
+//    return 0; // Renvoyer 0 pour indiquer le succès
 //}
 
 
 
-// Fonction pour charger les alliés à partir du fichier
-void load_allies(std::vector<Character>& allies) {
-    std::ifstream AllieFile("Allie.txt");
-    if (!AllieFile.is_open()) {
-        std::cerr << "Le fichier n'existe pas. Créez d'abord des alliés." << std::endl;
-        return;
-    }
-
-    Character allie;
-    std::string line;
-    while (std::getline(AllieFile, line)) {
-        if (line.find("ID: ") == 0) {
-            // Lire l'ID
-            allie.id = std::stoi(line.substr(4));
-        }
-        else if (line.find("Nom: ") == 0) {
-            // Lire le nom
-            allie.nom = line.substr(5);
-        }
-        else if (line.find("Vie: ") == 0) {
-            // Lire la vie
-            allie.vie = std::stoi(line.substr(5));
-        }
-        else if (line.find("Attack1: ") == 0) {
-            // Lire attack1
-            allie.attack1 = std::stoi(line.substr(8));
-        }
-        else if (line.find("Attack2: ") == 0) {
-            // Lire attack2
-            allie.attack2 = std::stoi(line.substr(8));
-            allies.push_back(allie);
-        }
-    }
-
-    AllieFile.close();
-}
-
-// Fonction pour charger les alliés à partir du fichier
-void load_enemies(std::vector<Character>& enemies) {
-    std::ifstream EnemyFile("Enemy.txt");
-    if (!EnemyFile.is_open()) {
-        std::cerr << "Le fichier n'existe pas. Créez d'abord des alliés." << std::endl;
-        return;
-    }
-
-    Character enemy;
-    std::string line;
-    while (std::getline(EnemyFile, line)) {
-        if (line.find("ID: ") == 0) {
-            // Lire l'ID
-            enemy.id = std::stoi(line.substr(4));
-        }
-        else if (line.find("Nom: ") == 0) {
-            // Lire le nom
-            enemy.nom = line.substr(5);
-        }
-        else if (line.find("Vie: ") == 0) {
-            // Lire la vie
-            enemy.vie = std::stoi(line.substr(5));
-        }
-        else if (line.find("Attack1: ") == 0) {
-            // Lire attack1
-            enemy.attack1 = std::stoi(line.substr(8));
-        }
-        else if (line.find("Attack2: ") == 0) {
-            // Lire attack2
-            enemy.attack2 = std::stoi(line.substr(8));
-            enemies.push_back(enemy);
-        }
-    }
-
-    EnemyFile.close();
-}
-
-
 int main() {
-    std::cout << "Bonjour jeune aventurier !" << std::endl;
 
-    std::vector<Character> allies;
-    create_allie(allies);
-    std::vector<Character> enemies;
-    create_enemy(enemies, allies);
-    load_allies(allies);
-    load_enemies(enemies);
+    std::cout << "Bonjour jeune Astronaute !" << std::endl;
 
-    if (allies.empty()) {
-        std::cout << "Aucun allié n'a été chargé. Créez des alliés d'abord." << std::endl;
-    }
-    else {
-        std::cout << "Nombre d'alliés chargés : " << allies.size() << std::endl;
-        for (const Character& allie : allies) {
-            std::cout << "Nom : " << allie.nom << ", Vie : " << allie.vie << ", Attaque 1 : " << allie.attack1 << ", Attaque 2 : " << allie.attack2 << std::endl;
-        }
-    }
+    int difficulte;
 
-    if (enemies.empty()) {
-        std::cout << "Aucun ennemie n'a été chargé. Créez des ennemies d'abord." << std::endl;
-    }
-    else {
-        std::cout << "Nombre d'ennemies chargés : " << allies.size() << std::endl;
-        for (const Character& enemy : enemies) {
-            std::cout << "Nom : " << enemy.nom << ", Vie : " << enemy.vie << ", Attaque 1 : " << enemy.attack1 << ", Attaque 2 : " << enemy.attack2 << std::endl;
-        }
-    }
+    std::cout << "Choisissez votre niveau de difficulte : 1 - Facile    2 - Normal    3 - Difficile" << std::endl;
+
+    std::cout << "Difficulte : ";
+
+    std::cin >> difficulte;
+
+    createVaisseau(difficulte);
 
     return 0;
 }
